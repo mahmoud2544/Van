@@ -1,0 +1,225 @@
+{
+  "about": {
+    "image": "Images/about.jpg",
+    "text1": "Van Media is a creative media production company that specializes in videography, photography, video editing, graphic design, wedding filmmaking, and commercial advertising. The company helps individuals, brands, and businesses tell their stories, promote their products, and capture important moments through high-quality visual content.\n\nWith a focus on creativity, professionalism, originality, and attention to detail, Van Media creates visually appealing and meaningful content that reflects each client\u2019s unique vision. The company aims to turn ideas and moments into powerful visual stories that engage audiences, strengthen brands, and preserve memories for the future.",
+    "text2": "",
+    "text3": "",
+    "text4": "",
+    "title": "ABOUT US"
+  },
+  "contact": {
+    "links": [
+      {
+        "id": "c1",
+        "label": "WhatsApp",
+        "link": "https://wa.me/254799443199 ",
+        "value": "+254799443199 "
+      },
+      {
+        "id": "c2",
+        "label": "Instagram",
+        "link": "https://www.instagram.com/van_media04/",
+        "value": "@van_media04"
+      },
+      {
+        "id": "c3",
+        "label": "Email",
+        "link": "mailto:vandioufahmed@gmail.com",
+        "value": "vandioufahmed@gmail.com"
+      },
+      {
+        "id": "c4",
+        "label": "Phone Call",
+        "link": "tel:+254799443199 ",
+        "value": "+254799443199 "
+      },
+      {
+        "id": "k3d3d9n2c",
+        "label": "Email",
+        "link": "",
+        "value": "Mishney560@gmail.com"
+      },
+      {
+        "id": "hxv9jvakf",
+        "label": "Phone Call",
+        "value": "+25472837333",
+        "link": ""
+      },
+      {
+        "id": "2q8exhahv",
+        "label": "WhatsApp",
+        "value": "+25472837333",
+        "link": ""
+      }
+    ],
+    "location": "Nairobi, KENYA",
+    "org": "Vaney Products and Media"
+  },
+  "featured": {
+    "images": [
+      "Images/c424d738_WhatsApp_Image_2026-09-03_at_17.12.33_1.jpeg",
+      "Images/83692de2_WhatsApp_Image_2026-09-03_at_17.12.31_1.jpeg",
+      "Images/1687a1c2_WhatsApp_Image_2026-09-03_at_17.12.32.jpeg"
+    ]
+  },
+  "hero": {
+    "images": [
+      "Images/ef0fa2a5_WhatsApp_Image_2026-09-03_at_17.12.30_2.jpeg",
+      "Images/ce934b52_4fc2ea54_d8bc7299_6.jpg",
+      "Images/791e627a_WhatsApp_Image_2026-09-03_at_17.12.30_1.jpeg"
+    ]
+  },
+  "portfolio": [
+    {
+      "id": "lswch3vuj",
+      "caption": "",
+      "subCaption": "",
+      "type": "image",
+      "filename": "ceb51dbb_WhatsApp_Image_2026-09-03_at_17.12.30.jpeg"
+    },
+    {
+      "id": "qxx9xexh4",
+      "caption": "",
+      "subCaption": "",
+      "type": "image",
+      "filename": "6012438c_WhatsApp_Image_2026-09-03_at_17.12.33_1.jpeg"
+    },
+    {
+      "id": "383sxvs0k",
+      "caption": "",
+      "subCaption": "",
+      "type": "image",
+      "filename": "a493ebca_WhatsApp_Image_2026-09-03_at_17.12.32_2.jpeg"
+    },
+    {
+      "id": "vnbtuxwtt",
+      "caption": "",
+      "subCaption": "",
+      "type": "image",
+      "filename": "45a498e8_WhatsApp_Image_2026-09-03_at_17.12.33.jpeg"
+    },
+    {
+      "id": "f32k5ab4q",
+      "caption": "",
+      "subCaption": "",
+      "type": "image",
+      "filename": "99a83c66_WhatsApp_Image_2026-09-03_at_17.12.27_-_Copy.jpeg"
+    },
+    {
+      "id": "olvavm4ms",
+      "caption": "",
+      "subCaption": "",
+      "type": "image",
+      "filename": "a3cb5451_83692de2_WhatsApp_Image_2026-09-03_at_17.12.31_1.jpeg"
+    },
+    {
+      "id": "ooclm7zd0",
+      "caption": "",
+      "subCaption": "",
+      "type": "image",
+      "filename": "e781b665_791e627a_WhatsApp_Image_2026-09-03_at_17.12.30_1.jpeg"
+    },
+    {
+      "id": "4tuvlpgsa",
+      "caption": "",
+      "subCaption": "",
+      "type": "image",
+      "filename": "cf1a2ef8_5.jpg"
+    },
+    {
+      "id": "1jsuhgl40",
+      "caption": "",
+      "subCaption": "",
+      "type": "image",
+      "filename": "c394b76f_4fc2ea54_d8bc7299_6.jpg"
+    }
+  ],
+  "process": [
+    {
+      "desc": "Understand your vision, location, mood board, and content goals.",
+      "id": "proc1",
+      "media": "Images/94c7c1e8_1.jpg",
+      "number": "01",
+      "title": "Discovery"
+    },
+    {
+      "desc": "Create the concept, schedule, equipment setup, and production flow.",
+      "id": "proc2",
+      "media": "Images/e114d33a_Plan.jpeg",
+      "number": "02",
+      "title": "Planning"
+    },
+    {
+      "desc": "Capture sharp visuals with strong direction and creative execution.",
+      "id": "proc3",
+      "media": "Images/25e5a077_about.jpg",
+      "number": "03",
+      "title": "Shoot Day"
+    },
+    {
+      "desc": "Receive edited photos, cinematic videos, and optimized social assets.",
+      "id": "proc4",
+      "media": "Images/f2f69ef2_photo5.jpg",
+      "number": "04",
+      "title": "Delivery"
+    }
+  ],
+  "products": [
+    {
+      "desc": "Stay hydrated on set or at the gym with our official premium stainless steel water bottle. Designed to keep drinks cold for up to 24 hours.",
+      "id": "pr1",
+      "media": "Images/water-bottle.jpg",
+      "price": "Ksh 1600",
+      "title": "Water Bottle"
+    },
+    {
+      "id": "29sqfseha",
+      "title": "Gym Clothes",
+      "price": "Ksh 5600",
+      "desc": "Comfortable and stylish performance wear. Built for active creatives who need durable, breathable apparel during long shoots or workouts.",
+      "media": "Images/f8af36e8_gym-clothes.jpg"
+    }
+  ],
+  "services": [
+    {
+      "id": "y721u600q",
+      "title": "Portrait Photography",
+      "desc": "Creative portraits for individuals, models, graduates, and personal brands with a sharp editorial finish.",
+      "type": "image",
+      "media": "Images/48f3552a_WhatsApp_Image_2026-09-03_at_17.12.32.jpeg"
+    },
+    {
+      "id": "v26n032qg",
+      "title": "Sports Media",
+      "desc": "Dynamic sports photography and highlight coverage that captures motion, emotion, and match-day energy\n\n",
+      "type": "image",
+      "media": "Images/3bb16553_2.jpg"
+    },
+    {
+      "id": "iodnov30i",
+      "title": "Event Coverage",
+      "desc": "Professional photo and video coverage for weddings, celebrations, launches, and special occasions.",
+      "type": "video",
+      "media": "Images/1a725aeb_f48b31e7_a3f90baf_553b8d38_event.mp4"
+    }
+  ],
+  "testimonials": [
+    {
+      "client": "Mahmoud",
+      "id": "joe5sqb7r",
+      "quote": "Simply the best..."
+    }
+  ],
+  "video": [
+    {
+      "id": "bknfny68p",
+      "media": "Images/9432e3d0_WhatsApp_Video_2026-04-07_at_15.49.01.mp4",
+      "poster": ""
+    },
+    {
+      "id": "7v3tqt3xs",
+      "media": "Images/f48b31e7_a3f90baf_553b8d38_event.mp4",
+      "poster": ""
+    }
+  ]
+}

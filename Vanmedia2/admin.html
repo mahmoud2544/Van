@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CMS Dashboard - Van Media</title>
+  <style>
+    :root {
+      --bg: #F5F7FA;
+      --card: #FFFFFF;
+      --sidebar: #FFFFFF;
+      --sidebar-text: #828D99;
+      --primary: #ff4558; /* Apex Next.js primary pink/red */
+      --primary-grad: linear-gradient(45deg, #ff4558, #ff6a78);
+      --border: #edf1f5;
+      --text: #475F7B;
+      --heading: #333;
+      --radius: 10px;
+      --shadow: 0 4px 20px 0 rgba(0,0,0,0.05);
+    }
+    [data-theme="dark"] {
+      --bg: #121212;
+      --card: #1E1E1E;
+      --sidebar: #1E1E1E;
+      --sidebar-text: #A0AAB5;
+      --border: #2A2A2A;
+      --text: #E0E0E0;
+      --heading: #ffffff;
+    }
+    body { font-family: Impact, 'Arial Narrow', Arial, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; display: flex; flex-direction: column; min-height: 100vh; }
+    
+    /* Login Screen */
+    #login-view { background: url('Images/icon.png') no-repeat center center / cover; display: flex; align-items: center; justify-content: center; height: 100vh; position: relative; }
+    #login-view::after { content: ''; position: absolute; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.5); z-index: 1; }
+    .login-box { background: var(--card); padding: 40px 35px; border-radius: var(--radius); box-shadow: 0 10px 30px rgba(0,0,0,0.2); text-align: center; width: 350px; position: relative; z-index: 2; border: none; }
+    .login-box h2 { color: var(--heading); margin-top: 0; margin-bottom: 30px; font-weight: 500; font-size: 1.6rem; }
+    input[type="text"], input[type="password"], input[type="email"], textarea { width: 100%; padding: 12px 15px; margin: 8px 0 16px; border: 1px solid var(--border); background: var(--card); border-radius: 6px; box-sizing: border-box; font-family: inherit; font-size: 0.95rem; color: var(--text); outline: none; transition: border-color 0.2s; }
+    input:focus, textarea:focus { border-color: #ff4558; }
+    button { font-family: inherit; background: var(--primary-grad); color: white; border: none; padding: 12px 20px; border-radius: 6px; cursor: pointer; font-size: 1rem; font-weight: 500; letter-spacing: 0.5px; width: 100%; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 4px 10px rgba(255, 69, 88, 0.3); }
+    button:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(255, 69, 88, 0.4); }
+    button.btn-danger { background: #FF5B5C; box-shadow: none; width: auto; padding: 8px 15px; border-radius: 4px; font-size: 0.9rem; }
+    button.btn-inline { width: auto; box-shadow: none; padding: 10px 20px; }
+    
+    /* Dashboard Layout */
+    #dashboard-view { display: none; height: 100vh; flex-direction: column; background: var(--bg); }
+    
+    .sidebar-layout { display: flex; flex: 1; overflow: hidden; }
+    .sidebar { width: 260px; background: var(--sidebar); display: flex; flex-direction: column; flex-shrink: 0; overflow-y: auto; color: var(--sidebar-text); box-shadow: 2px 0 20px 0 rgba(0,0,0,0.05); z-index: 10; border-right: none; }
+    .brand-link { padding: 25px 20px; display: flex; align-items: center; color: var(--heading); font-size: 1.4rem; font-weight: 600; white-space: nowrap; margin-bottom: 10px; }
+    .brand-link img { width: 35px; height: 35px; margin-right: 12px; border-radius: 8px; }
+    
+    .tab-btn { display: block; width: 100%; text-align: left; background: transparent; border: none; padding: 14px 25px; font-size: 1.05rem; color: var(--sidebar-text); cursor: pointer; margin: 4px 15px; width: calc(100% - 30px); font-family: inherit; transition: all 0.3s; border-radius: 6px; box-shadow: none; }
+    .tab-btn:hover { background: rgba(128,128,128,0.1); color: var(--heading); }
+    .tab-btn.active { background: var(--primary-grad); color: white; box-shadow: 0 4px 10px rgba(255, 69, 88, 0.3); font-weight: 500; }
+    
+    .main-panel { flex: 1; display: flex; flex-direction: column; background: var(--bg); overflow: hidden; }
+    header { background: transparent; padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; min-height: 60px; }
+    header h1 { margin: 0; font-size: 1.5rem; font-weight: 500; color: var(--heading); }
+    .header-actions { display: flex; gap: 15px; align-items: center; }
+    
+    .content-area { flex: 1; padding: 0 40px 40px; overflow-y: auto; }
+    
+    /* Stats Row (Apex Template) */
+    .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 25px; margin-bottom: 30px; }
+    .stat-card { background: var(--card); border-radius: var(--radius); padding: 25px; box-shadow: var(--shadow); display: flex; justify-content: space-between; align-items: center; }
+    .stat-card h3 { font-size: 1.8rem; margin: 0 0 5px; color: var(--heading); border: none; padding: 0; }
+    .stat-card p { font-size: 0.9rem; color: var(--sidebar-text); margin: 0; text-transform: uppercase; letter-spacing: 0.5px; }
+    .stat-card .icon { font-size: 2rem; color: var(--primary); background: rgba(255, 69, 88, 0.1); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+    
+    /* Content Cards */
+    .tab-content { display: none; background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 30px; border-top: none; }
+    .tab-content.active { display: block; }
+    .tab-content h3 { padding-bottom: 12px; border-bottom: 1px solid var(--border); margin-top: 0; margin-bottom: 25px; font-weight: 500; font-size: 1.3rem; color: var(--heading); }
+    hr { border: 0; border-top: 1px solid var(--border); margin: 30px 0; }
+    
+    /* Forms & Utilities */
+    .form-group { margin-bottom: 1.2rem; }
+    label { display: block; margin-bottom: .6rem; font-weight: 500; color: var(--heading); }
+    textarea { min-height: 100px; resize: vertical; }
+    
+    .list-item { border-bottom: 1px solid var(--border); padding: 15px 0; display: flex; gap: 20px; align-items: center; }
+    .list-item:last-child { border-bottom: none; }
+    .list-item img, .list-item video { width: 80px; height: 80px; object-fit: cover; border-radius: 8px; background: var(--border); }
+    .list-item-content { flex: 1; }
+    .list-item-content h4 { margin: 0 0 5px; color: var(--heading); font-weight: 500; font-size: 1.1rem; }
+    .list-item-content p { margin: 0; font-size: 0.9rem; color: var(--sidebar-text); }
+    
+    .save-bar { background: var(--card); padding: 15px 40px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; box-shadow: 0 -2px 10px rgba(0,0,0,0.02); }
+    
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .flex-row { display: flex; gap: 15px; align-items: flex-end; }
+    
+    /* Modal & Forget User Styles */
+    .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 999; justify-content: center; align-items: center; }
+    .modal-content { background: var(--card); padding: 30px; border-radius: var(--radius); width: 420px; max-width: 90%; box-shadow: 0 10px 30px rgba(0,0,0,0.3); border: 1px solid var(--border); color: var(--text); }
+    .modal-content h3 { margin-top: 0; color: var(--heading); font-size: 1.3rem; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
+    .forget-btn-outline { background: transparent; color: #ff4558; border: 1px solid #ff4558; width: auto; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: 500; transition: all 0.2s; }
+    .forget-btn-outline:hover { background: #ff4558; color: #fff; }
+  </style>
+</head>
+<body>
+
+  <!-- LOGIN -->
+  <div id="login-view">
+    <div class="login-box">
+      <h2>VanMedia Adm</h2>
+      <input type="text" id="admin-user" placeholder="Username">
+      <input type="password" id="admin-pass" placeholder="Password" onkeydown="if(event.key==='Enter') login()">
+      
+      <div style="display:flex; justify-content:space-between; align-items:center; margin: 4px 0 16px; font-size: 0.85rem;">
+        <label style="display:inline-flex; align-items:center; gap:6px; margin:0; cursor:pointer; font-weight:normal; color:var(--text);">
+          <input type="checkbox" id="remember-user" style="width:auto; margin:0;"> Remember User
+        </label>
+        <button type="button" onclick="forgetUser(event)" style="background:none; border:none; color:#ff4558; padding:0; width:auto; font-size:0.85rem; cursor:pointer; text-decoration:underline; box-shadow:none;">Forget User</button>
+      </div>
+
+      <button onclick="login()">Log In</button>
+      <p id="login-err" style="color:#FF5B5C;font-size:14px;display:none;margin-top:16px;">Invalid credentials</p>
+
+      <div style="margin-top: 20px; border-top: 1px solid var(--border); padding-top: 15px; font-size: 0.85rem; text-align: center;">
+        <a href="#" onclick="showForgotModal(event)" style="color:#ff4558; text-decoration:none; font-weight:500;">Forgot Username or Password?</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- FORGOT USER / PASSWORD MODAL -->
+  <div id="forgot-modal" class="modal-overlay">
+    <div class="modal-content">
+      <h3>Forgot Username or Password?</h3>
+      <div style="font-size: 0.9rem; line-height: 1.5; color: var(--text); margin-bottom: 20px;">
+        <p style="margin-top:0;"><strong>Default Username:</strong> <code>admin</code></p>
+        <p><strong>Forgot Password?</strong><br>
+        If you have lost your password, you can inspect or update the <code>auth.txt</code> file in your backend folder, or contact your server administrator.</p>
+        <p><strong>Forget Saved User on this Device?</strong><br>
+        This will erase saved user credentials from browser local storage and reset the login input.</p>
+      </div>
+      <div style="display: flex; gap: 10px; justify-content: space-between; align-items: center;">
+        <button type="button" class="forget-btn-outline" onclick="forgetUser(event); closeForgotModal();">Forget Saved User</button>
+        <button type="button" class="btn-inline" style="width: auto; padding: 8px 18px;" onclick="closeForgotModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div id="dashboard-view">
+    <div class="sidebar-layout">
+      <div class="sidebar">
+        <div class="brand-link">
+          <img src="Images/icon.png" alt="Logo" onerror="this.src='Images/logo.png'">
+          VanMedia Adm
+        </div>
+        <button class="tab-btn active" onclick="switchTab('tab-about')">About Us</button>
+        <button class="tab-btn" onclick="switchTab('tab-portfolio')">📸 Portfolio</button>
+        <button class="tab-btn" onclick="switchTab('tab-video')">🎥 Videos</button>
+        <button class="tab-btn" onclick="switchTab('tab-services')">Brief Services</button>
+        <button class="tab-btn" onclick="switchTab('tab-products')">🛍️ Products</button>
+        <button class="tab-btn" onclick="switchTab('tab-testimonial')">📋 Testimonials</button>
+        <button class="tab-btn" onclick="switchTab('tab-contact')">📞 Contact & Links</button>
+        <button class="tab-btn" onclick="switchTab('tab-settings')">Settings</button>
+        <button class="tab-btn" onclick="switchTab('tab-hero')">🖼️ Hero & Featured</button>
+      </div>
+
+      <div class="main-panel">
+        <header>
+          <h1>Dashboard</h1>
+          <div class="header-actions">
+            <button class="btn-inline" style="background:transparent; border:1px solid var(--border); color:var(--text); padding:8px 15px;" onclick="toggleTheme()">🌓 Theme</button>
+            <span style="color:#828D99;font-weight:500;">Hello, <span id="user-display-name">Admin</span></span>
+            <button class="forget-btn-outline" onclick="forgetUserAndLogout()" title="Log out and forget saved user info on this device">Forget User & Log Out</button>
+            <button class="btn-danger" style="background:transparent; color:#ff4558; border:1px solid #ff4558; width:auto; padding:8px 15px;" onclick="logout()">Log Out</button>
+          </div>
+        </header>
+        
+        <div class="content-area">
+          <div class="stats-row">
+            <div class="stat-card">
+              <div>
+                <h3 id="stat-views">0</h3>
+                <p>Total Views</p>
+              </div>
+              <div class="icon">👁️</div>
+            </div>
+            <div class="stat-card">
+              <div>
+                <h3 id="stat-inter">0</h3>
+                <p>Interactions</p>
+              </div>
+              <div class="icon">🖱️</div>
+            </div>
+            <div class="stat-card">
+              <div>
+                <h3 id="stat-photos">0</h3>
+                <p>Portfolio Items</p>
+              </div>
+              <div class="icon">📸</div>
+            </div>
+            <div class="stat-card" style="display:flex; flex-direction:column; align-items:start; justify-content:center; padding: 20px;">
+              <h3 style="font-size:1.1rem; margin-bottom:8px; border-bottom:1px solid var(--border); padding-bottom:5px; width:100%;">Monthly Recap</h3>
+              <div id="stat-monthly" style="font-size:0.85rem; color:var(--text); width:100%; max-height: 55px; overflow-y:auto;">
+                 Loading...
+              </div>
+            </div>
+          </div>
+        
+        <!-- ABOUT TAB -->
+        <div id="tab-about" class="tab-content active">
+          <h3>Manage About Page</h3>
+          <div class="form-group">
+            <label>Title</label>
+            <input type="text" id="about_title">
+          </div>
+          <div class="form-group">
+            <label>Biography Paragraph 1</label>
+            <textarea id="about_text1"></textarea>
+          </div>
+          <div class="form-group">
+            <label>Biography Paragraph 2</label>
+            <textarea id="about_text2"></textarea>
+          </div>
+          <div class="form-group">
+            <label>Biography Paragraph 3</label>
+            <textarea id="about_text3"></textarea>
+          </div>
+          <div class="form-group">
+            <label>Biography Paragraph 4</label>
+            <textarea id="about_text4"></textarea>
+          </div>
+          <div class="form-group">
+            <label>Cover Image (Upload new to replace)</label>
+            <input type="file" id="about_image_file" accept="image/*">
+            <p id="about_image_preview" style="font-size:0.8rem; color:gray;"></p>
+          </div>
+        </div>
+
+        <!-- SERVICES TAB -->
+        <div id="tab-services" class="tab-content">
+          <h3>Current Services</h3>
+          <div id="services-list"></div>
+          <hr>
+          <h3>Add New Service</h3>
+          <div class="grid-2">
+            <input type="text" id="new_svc_title" placeholder="Service Title">
+            <select id="new_svc_type" style="padding:12px; border:1px solid #ccc; border-radius:4px;">
+              <option value="image">Standard Image</option>
+              <option value="video">Autoplay Video</option>
+            </select>
+          </div>
+          <textarea id="new_svc_desc" placeholder="Service Description"></textarea>
+          <div class="flex-row">
+            <div style="flex:1">
+              <label>Service Media Cover</label>
+              <input type="file" id="new_svc_media" style="margin:0;">
+            </div>
+            <button class="btn-inline" onclick="addService()">Add Service</button>
+          </div>
+        </div>
+
+        <!-- PRODUCTS TAB -->
+        <div id="tab-products" class="tab-content">
+          <h3>Current Merch</h3>
+          <div id="products-list"></div>
+          <hr>
+          <h3>Add New Product</h3>
+          <div class="grid-2">
+            <input type="text" id="new_pr_title" placeholder="Product Name">
+            <input type="text" id="new_pr_price" placeholder="Price (e.g. $24.99)">
+          </div>
+          <textarea id="new_pr_desc" placeholder="Product Details"></textarea>
+          <div class="flex-row">
+            <div style="flex:1">
+              <label>Product Image</label>
+              <input type="file" id="new_pr_media" accept="image/*" style="margin:0;">
+            </div>
+            <button class="btn-inline" onclick="addProduct()">Add Product</button>
+          </div>
+        </div>
+
+        <!-- PORTFOLIO TAB -->
+        <div id="tab-portfolio" class="tab-content">
+          <h3>Portfolio Grid</h3>
+          <div id="portfolio-list"></div>
+          <hr>
+          <h3>Upload to Portfolio</h3>
+          <div class="grid-2">
+            <input type="text" id="new_port_title" placeholder="Caption Header">
+            <select id="new_port_type" style="padding:12px; border:1px solid #ccc; border-radius:4px;" disabled>
+              <option value="image">Image Entry</option>
+            </select>
+          </div>
+          <input type="text" id="new_port_sub" placeholder="Sub-Caption Details">
+          <div class="flex-row">
+            <div style="flex:1">
+              <label>Image File</label>
+              <input type="file" id="new_port_media" accept="image/*" style="margin:0;">
+            </div>
+            <button class="btn-inline" onclick="addPortfolio()">Upload Media</button>
+          </div>
+        </div>
+
+        <!-- VIDEO TAB -->
+        <div id="tab-video" class="tab-content">
+          <h3>Feature Videos</h3>
+          <p>These videos act as the core showcase pieces next to the gallery.</p>
+          <div id="video-list"></div>
+          <hr>
+          <h3>Add New Feature Video</h3>
+          <div class="flex-row">
+            <div style="flex:1">
+              <label>Video File (.mp4)</label>
+              <input type="file" id="new_v_media" accept="video/mp4" style="margin-bottom:10px; margin-top:0;">
+              <label>Poster Graphic (Image)</label>
+              <input type="file" id="new_v_poster" accept="image/*" style="margin-bottom:10px;">
+            </div>
+            <button class="btn-inline" onclick="addVideo()">Add Video</button>
+          </div>
+        </div>
+
+        <!-- TESTIMONIALS TAB -->
+        <div id="tab-testimonial" class="tab-content">
+          <h3>Client Testimonials</h3>
+          <div id="testimonial-list"></div>
+          <hr>
+          <h3>Add Testimonial</h3>
+          <input type="text" id="new_t_client" placeholder="Client or Brand Name">
+          <textarea id="new_t_quote" placeholder="Client Quote (without quotation marks)" style="min-height:80px;"></textarea>
+          <button class="btn-inline" onclick="addTestimonial()">Add Testimonial</button>
+        </div>
+
+        <!-- CONTACT TAB -->
+        <div id="tab-contact" class="tab-content">
+          <h3>Network & Location</h3>
+          <div class="grid-2">
+            <div>
+              <label>Organisation Name</label>
+              <input type="text" id="c_org">
+            </div>
+            <div>
+              <label>Location Details</label>
+              <input type="text" id="c_loc">
+            </div>
+          </div>
+          <hr>
+          <h3>Manage Links</h3>
+          <div id="contact-links-list"></div>
+          <hr>
+          <h3>Add New Link</h3>
+          <p style="font-size: 0.9rem; color: var(--sidebar-text); margin-bottom: 15px;">Labels like "WhatsApp", "Instagram", "Email", and "Phone Call" will automatically use premium icons.</p>
+          <div class="grid-2">
+            <input type="text" id="new_link_label" placeholder="Label (e.g. WhatsApp)">
+            <input type="text" id="new_link_value" placeholder="Display Value (e.g. +254...)">
+          </div>
+          <input type="text" id="new_link_url" placeholder="URL / Link (e.g. https://wa.me/... or mailto:...)">
+          <button class="btn-inline" onclick="addContactLink()">Add Link</button>
+        </div>
+        <!-- HERO & FEATURED IMAGES TAB -->
+        <div id="tab-hero" class="tab-content">
+
+          <h3>Hero Floating Frames</h3>
+          <p style="color:var(--sidebar-text); margin-bottom:16px;">Images that float on the right of the hero section. First 3 use the designed layout positions; extras stack below.</p>
+          <div id="hero-images-list" style="display:flex; flex-wrap:wrap; gap:12px; margin-bottom:16px;"></div>
+          <div class="flex-row" style="align-items:flex-end; gap:12px;">
+            <div style="flex:1">
+              <label>Add Hero Image</label>
+              <input type="file" id="hero_add_file" accept="image/*" style="margin:0;">
+            </div>
+            <button class="btn-inline" onclick="addHeroImage()">＋ Add</button>
+          </div>
+
+          <hr>
+
+          <h3>Portfolio Side Panel</h3>
+          <p style="color:var(--sidebar-text); margin-bottom:16px;">Images stacked in the tall column beside the scrolling portfolio gallery.</p>
+          <div id="featured-images-list" style="display:flex; flex-wrap:wrap; gap:12px; margin-bottom:16px;"></div>
+          <div class="flex-row" style="align-items:flex-end; gap:12px;">
+            <div style="flex:1">
+              <label>Add Featured Image</label>
+              <input type="file" id="feat_add_file" accept="image/*" style="margin:0;">
+            </div>
+            <button class="btn-inline" onclick="addFeaturedImage()">＋ Add</button>
+          </div>
+
+        </div>
+
+        <!-- SETTINGS TAB -->
+        <div id="tab-settings" class="tab-content">
+          <h3>Security Settings</h3>
+          <p style="color:#757575;">Change your CMS Admin password. (Requires an active session)</p>
+          <div class="form-group" style="max-width: 400px;">
+            <label>Current Password</label>
+            <input type="password" id="s_curr_pass" placeholder="Verify current password">
+            <label>New Password</label>
+            <input type="password" id="s_new_pass" placeholder="Enter new password">
+            <label>Confirm Password</label>
+            <input type="password" id="s_conf_pass" placeholder="Retype new password">
+            <button class="btn-inline" style="background:#28c76f; width:100%; margin-top:10px;" onclick="changePassword()">Update Password</button>
+          </div>
+
+          <hr style="margin: 30px 0;">
+
+          <h3>User & Device Session Preferences</h3>
+          <p style="color:#757575;">Manage saved user credentials and device session state.</p>
+          <div style="background: var(--bg); padding: 20px; border-radius: 8px; border: 1px solid var(--border); max-width: 500px; margin-bottom: 25px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+              <div>
+                <strong style="display: block; color: var(--heading);">Remembered User Status</strong>
+                <span id="settings-user-status" style="font-size: 0.85rem; color: var(--sidebar-text);">Active</span>
+              </div>
+              <button class="forget-btn-outline" onclick="forgetUserFromSettings()">Forget Saved User</button>
+            </div>
+            <p style="font-size: 0.85rem; color: var(--sidebar-text); margin: 0;">
+              Clicking <strong>Forget Saved User</strong> removes saved username credentials and active login tokens from this browser.
+            </p>
+          </div>
+
+          <h3>Data Privacy (Right to be Forgotten)</h3>
+          <p style="color:#757575;">Clear tracked visitor analytics and interaction records from system storage.</p>
+          <div style="background: var(--bg); padding: 20px; border-radius: 8px; border: 1px solid var(--border); max-width: 500px;">
+            <p style="font-size: 0.85rem; color: var(--sidebar-text); margin-top: 0; margin-bottom: 15px;">
+              Permanently reset tracked view counts and interaction logs for privacy compliance.
+            </p>
+            <button class="btn-inline" style="background: #FF9F43; color: white; width: auto; padding: 8px 18px;" onclick="resetAnalyticsData()">Clear Tracked User Data</button>
+          </div>
+        </div>
+
+        </div>
+        
+      <div class="save-bar">
+        <span id="save-status" style="color:var(--text);font-style:italic;">All systems ready.</span>
+        <button style="width:auto; padding: 12px 35px; border-radius:30px; box-shadow: 0 4px 15px rgba(255,69,88,0.4);" onclick="publishChanges()">🚀 Publish Changes Live</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let token = '';
+    let globalData = {};
+
+    function toggleTheme() {
+      const root = document.documentElement;
+      if(root.getAttribute('data-theme') === 'dark') {
+        root.setAttribute('data-theme', 'light');
+        localStorage.setItem('admin-theme', 'light');
+      } else {
+        root.setAttribute('data-theme', 'dark');
+        localStorage.setItem('admin-theme', 'dark');
+      }
+    }
+    
+    if(localStorage.getItem('admin-theme') === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    }
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+      event.target.classList.add('active');
+    }
+
+    // --- User & Forget User Logic ---
+    function initUser() {
+      const savedUser = localStorage.getItem('vanmedia_admin_user');
+      const userField = document.getElementById('admin-user');
+      const rememberCheckbox = document.getElementById('remember-user');
+      if (savedUser) {
+        if (userField) userField.value = savedUser;
+        if (rememberCheckbox) rememberCheckbox.checked = true;
+      } else {
+        if (userField) userField.value = '';
+        if (rememberCheckbox) rememberCheckbox.checked = false;
+      }
+      updateUserStatusDisplay();
+    }
+
+    function updateUserStatusDisplay() {
+      const savedUser = localStorage.getItem('vanmedia_admin_user');
+      const name = savedUser || 'Admin';
+      const userSpan = document.getElementById('user-display-name');
+      if (userSpan) userSpan.textContent = name;
+
+      const statusSpan = document.getElementById('settings-user-status');
+      if (statusSpan) {
+        statusSpan.textContent = savedUser ? `Remembered as "${savedUser}"` : 'No saved user on this device';
+      }
+    }
+
+    async function forgetUser(e) {
+      if (e) e.preventDefault();
+      localStorage.removeItem('vanmedia_admin_user');
+      localStorage.removeItem('vanmedia_admin_token');
+      const userField = document.getElementById('admin-user');
+      const rememberCheckbox = document.getElementById('remember-user');
+      if (userField) userField.value = '';
+      if (rememberCheckbox) rememberCheckbox.checked = false;
+      updateUserStatusDisplay();
+
+      try {
+        await fetch('/api/forget-user', { method: 'POST' });
+      } catch(err) {}
+
+      const msg = document.getElementById('login-err');
+      if (msg) {
+        msg.style.color = '#28c76f';
+        msg.textContent = '✓ Saved user credentials forgotten on this device!';
+        msg.style.display = 'block';
+        setTimeout(() => {
+          msg.style.display = 'none';
+          msg.style.color = '#FF5B5C';
+          msg.textContent = 'Invalid credentials';
+        }, 3500);
+      }
+    }
+
+    function showForgotModal(e) {
+      if (e) e.preventDefault();
+      document.getElementById('forgot-modal').style.display = 'flex';
+    }
+
+    function closeForgotModal() {
+      document.getElementById('forgot-modal').style.display = 'none';
+    }
+
+    function logout() {
+      token = '';
+      document.getElementById('dashboard-view').style.display = 'none';
+      document.getElementById('login-view').style.display = 'flex';
+      initUser();
+    }
+
+    async function forgetUserAndLogout() {
+      if (!confirm("Are you sure you want to forget saved user credentials and log out?")) return;
+      await forgetUser();
+      logout();
+    }
+
+    async function forgetUserFromSettings() {
+      if (!confirm("This will clear saved user credentials and log you out. Continue?")) return;
+      await forgetUser();
+      alert("Saved user forgotten! Redirecting to login...");
+      logout();
+    }
+
+    async function resetAnalyticsData() {
+      if (!confirm("Are you sure you want to clear all tracked visitor & interaction user data?")) return;
+      try {
+        const res = await fetch('/api/analytics/reset', {
+          method: 'POST',
+          headers: { 'Authorization': 'Bearer ' + token }
+        });
+        if (res.ok) {
+          alert("Tracked user analytics data reset successfully.");
+          loadContent();
+        } else {
+          alert("Failed to reset analytics data.");
+        }
+      } catch(err) {
+        alert("Error communicating with server.");
+      }
+    }
+
+    // Initialize user state on script load
+    document.addEventListener('DOMContentLoaded', initUser);
+    window.addEventListener('load', initUser);
+
+    async function login() {
+      const user = document.getElementById('admin-user').value || 'Admin';
+      const pass = document.getElementById('admin-pass').value;
+      const remember = document.getElementById('remember-user').checked;
+      try {
+        const res = await fetch('/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username: user, password: pass })
+        });
+        if(res.ok) {
+          const data = await res.json();
+          token = data.token;
+          if (remember) {
+            localStorage.setItem('vanmedia_admin_user', user);
+          } else {
+            localStorage.removeItem('vanmedia_admin_user');
+          }
+          updateUserStatusDisplay();
+          document.getElementById('login-view').style.display = 'none';
+          document.getElementById('dashboard-view').style.display = 'flex';
+          loadContent();
+        } else {
+          const msg = document.getElementById('login-err');
+          msg.style.color = '#FF5B5C';
+          msg.textContent = 'Invalid credentials';
+          msg.style.display = 'block';
+        }
+      } catch (err) {
+        alert("Failed to connect to the server. Ensure the python backend is running!");
+      }
+    }
+
+    async function changePassword() {
+      const cur = document.getElementById('s_curr_pass').value;
+      const nw = document.getElementById('s_new_pass').value;
+      const conf = document.getElementById('s_conf_pass').value;
+      if (nw !== conf) return alert("New passwords do not match!");
+      const res = await fetch('/api/password', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token
+        },
+        body: JSON.stringify({ current: cur, new: nw })
+      });
+      if (res.ok) {
+        alert("Password updated securely!");
+        document.getElementById('s_curr_pass').value = '';
+        document.getElementById('s_new_pass').value = '';
+        document.getElementById('s_conf_pass').value = '';
+      } else {
+        alert("Failed to update: Incorrect current password.");
+      }
+    }
+
+    async function loadContent() {
+      try {
+        const res = await fetch('/api/content');
+        globalData = await res.json();
+        
+        // Calculate Stats
+      document.getElementById('stat-photos').innerText = globalData.portfolio ? globalData.portfolio.length : 0;
+      
+      try {
+        const analyticsRes = await fetch('/api/analytics', { headers: { 'Authorization': 'Bearer ' + token } });
+        const analytics = await analyticsRes.json();
+        document.getElementById('stat-views').innerText = analytics.views || 0;
+        document.getElementById('stat-inter').innerText = analytics.interactions || 0;
+        
+        let monthlyHtml = '';
+        if(analytics.monthly) {
+            for(const [month, mdata] of Object.entries(analytics.monthly).reverse()) {
+                monthlyHtml += `<div style="display:flex; justify-content:space-between; margin-bottom:4px;"><span>${month}</span> <strong>${mdata.views}V / ${mdata.interactions}I</strong></div>`;
+            }
+        }
+        document.getElementById('stat-monthly').innerHTML = monthlyHtml || 'No data yet';
+      } catch(e) {}
+      
+      renderAll();
+      } catch(e) {
+        alert("Failed to load CMS content! Check server status.");
+      }
+    }
+
+    function renderAll() {
+      // About
+      if(globalData.about) {
+        document.getElementById('about_title').value = globalData.about.title;
+        document.getElementById('about_text1').value = globalData.about.text1;
+        document.getElementById('about_text2').value = globalData.about.text2;
+        document.getElementById('about_text3').value = globalData.about.text3;
+        document.getElementById('about_text4').value = globalData.about.text4;
+        document.getElementById('about_image_preview').textContent = "Current: " + globalData.about.image;
+      }
+      
+      // Contact
+      if(globalData.contact) {
+        document.getElementById('c_org').value = globalData.contact.org || '';
+        document.getElementById('c_loc').value = globalData.contact.location || '';
+        renderLinksList();
+      }
+
+      // Hero & Featured Images
+      renderHeroImages();
+      renderFeaturedImages();
+
+      // Arrays
+      renderList('services-list', globalData.services, 'services');
+      renderList('products-list', globalData.products, 'products');
+      renderList('portfolio-list', globalData.portfolio, 'portfolio', true);
+      renderList('video-list', globalData.video, 'video');
+      renderList('testimonial-list', globalData.testimonials, 'testimonials');
+
+      // Process Inline Editor
+      const pList = document.getElementById('process-list');
+      pList.innerHTML = '';
+      if(globalData.process) {
+        globalData.process.forEach((proc, i) => {
+          const mediaSource = proc.media ? `<img src="${proc.media}" style="width:80px;height:80px;border-radius:8px;object-fit:cover;background:var(--border);">` : `<div style="width:80px;height:80px;border-radius:8px;background:var(--border);display:grid;place-items:center;font-size:0.75rem;color:var(--text);">No Photo</div>`;
+          pList.innerHTML += `
+            <div style="margin-bottom: 20px; border-left: 2px solid var(--secondary); padding-left: 15px; display:flex; gap:15px; align-items:flex-start;">
+              ${mediaSource}
+              <div style="flex:1;">
+                <strong>Step ${proc.number}</strong>
+                <input type="text" id="proc_title_${i}" value="${proc.title}">
+                <textarea id="proc_desc_${i}" style="min-height:50px;">${proc.desc}</textarea>
+              </div>
+              <div style="width:200px;">
+                <label>Change Photo</label>
+                <input type="file" id="proc_media_${i}" accept="image/*">
+              </div>
+            </div>
+          `;
+        });
+      }
+    }
+
+    function updateItemPrice(id, newPrice) {
+      const prod = globalData.products.find(x => x.id === id);
+      if(prod) prod.price = newPrice;
+    }
+
+    function renderList(containerId, array, arrayName, useFilename=false) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = '';
+      if(!array) return;
+      array.forEach(item => {
+        const mediaSource = useFilename ? 'Images/' + item.filename : item.media;
+        let visual = `<div style="width:80px;height:80px;background:var(--border);border-radius:8px;display:grid;place-items:center;color:var(--text);font-size:0.75rem;text-align:center;">No Media</div>`;
+        if(mediaSource && mediaSource !== 'undefined') {
+            visual = (item.type === 'video' || arrayName === 'video') ? `<video src="${mediaSource}"></video>` : `<img src="${mediaSource}">`;
+        }
+        
+        container.innerHTML += `
+          <div class="list-item">
+            ${visual}
+            <div class="list-item-content">
+              <h4>${item.title || item.client || item.caption || 'Item'}</h4>
+              ${arrayName === 'products' ? `<input type="text" value="${item.price || ''}" onchange="updateItemPrice('${item.id}', this.value)" style="width:120px; padding:6px; margin:4px 0; border:1px solid #ccc; border-radius:4px;" placeholder="Price">` : ''}
+              <p style="margin:0; font-size: 0.9rem; color: var(--sidebar-text);">${(arrayName !== 'products' && item.price) ? item.price + ' - ' : ''}${item.quote || item.desc || item.subCaption || ''}</p>
+            </div>
+            <button class="btn-danger" onclick="deleteItem('${arrayName}', '${item.id}')">Delete</button>
+          </div>
+        `;
+      });
+    }
+
+    function generateId() { return Math.random().toString(36).substr(2, 9); }
+
+    function renderLinksList() {
+      const container = document.getElementById('contact-links-list');
+      container.innerHTML = '';
+      if(!globalData.contact.links) globalData.contact.links = [];
+      
+      const processed = new Set();
+      globalData.contact.links.forEach(groupLink => {
+        const lid = groupLink.label.toLowerCase();
+        if (processed.has(lid)) return;
+        processed.add(lid);
+
+        const groupItems = globalData.contact.links.filter(l => l.label.toLowerCase() === lid);
+        
+        let itemsHtml = groupItems.map(item => `
+          <div style="display:inline-flex; align-items:center; gap:8px; background:var(--bg); padding:4px 10px; border-radius:4px; margin:4px 0;">
+            <span>${item.value}</span>
+            <button onclick="deleteLink('${item.id}')" style="background:none; border:none; color:#ff4558; cursor:pointer; font-size:12px; padding:0 4px;">✕</button>
+          </div>
+        `).join(' ');
+
+        container.innerHTML += `
+          <div class="list-item" style="display:block;">
+            <h4 style="margin-bottom:8px;">${groupLink.label}</h4>
+            <div style="display:flex; flex-wrap:wrap; gap:10px;">
+              ${itemsHtml}
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function addContactLink() {
+      const label = document.getElementById('new_link_label').value;
+      const val = document.getElementById('new_link_value').value;
+      const url = document.getElementById('new_link_url').value;
+      if(!label || !val) return alert("Label and Value are required.");
+      if(!globalData.contact.links) globalData.contact.links = [];
+      globalData.contact.links.push({ id: generateId(), label, value: val, link: url });
+      renderLinksList();
+      document.getElementById('new_link_label').value = '';
+      document.getElementById('new_link_value').value = '';
+      document.getElementById('new_link_url').value = '';
+    }
+
+    function deleteLink(id) {
+      if(!confirm('Delete this contact link?')) return;
+      globalData.contact.links = globalData.contact.links.filter(x => x.id !== id);
+      renderLinksList();
+    }
+
+    // --- Hero & Featured dynamic image lists ---
+    function renderHeroImages() {
+      if(!globalData.hero) globalData.hero = { images: [] };
+      if(!globalData.hero.images) globalData.hero.images = [];
+      const c = document.getElementById('hero-images-list');
+      c.innerHTML = '';
+      globalData.hero.images.forEach((src, i) => {
+        const labels = ['Frame 1 (Small Left)', 'Frame 2 (Main Centre)', 'Frame 3 (Small Bottom)'];
+        c.innerHTML += `
+          <div style="position:relative; text-align:center;">
+            <img src="${src}" style="width:140px; height:100px; object-fit:cover; border-radius:8px; border:1px solid var(--border); display:block;">
+            <span style="font-size:0.78rem; color:var(--sidebar-text); display:block; margin-top:4px;">${labels[i] || 'Extra Frame'}</span>
+            <button onclick="removeHeroImage(${i})" title="Remove" style="position:absolute;top:4px;right:4px;background:#ff4558;color:#fff;border:none;border-radius:50%;width:22px;height:22px;cursor:pointer;font-size:13px;line-height:1;padding:0;">✕</button>
+          </div>`;
+      });
+    }
+
+    function renderFeaturedImages() {
+      if(!globalData.featured) globalData.featured = { images: [] };
+      if(!globalData.featured.images) globalData.featured.images = [];
+      const c = document.getElementById('featured-images-list');
+      c.innerHTML = '';
+      globalData.featured.images.forEach((src, i) => {
+        c.innerHTML += `
+          <div style="position:relative; text-align:center;">
+            <img src="${src}" style="width:140px; height:120px; object-fit:cover; border-radius:8px; border:1px solid var(--border); display:block;">
+            <span style="font-size:0.78rem; color:var(--sidebar-text); display:block; margin-top:4px;">Side Image ${i+1}</span>
+            <button onclick="removeFeaturedImage(${i})" title="Remove" style="position:absolute;top:4px;right:4px;background:#ff4558;color:#fff;border:none;border-radius:50%;width:22px;height:22px;cursor:pointer;font-size:13px;line-height:1;padding:0;">✕</button>
+          </div>`;
+      });
+    }
+
+    function removeHeroImage(i) {
+      if(!confirm('Remove this hero image?')) return;
+      globalData.hero.images.splice(i, 1);
+      renderHeroImages();
+    }
+
+    function removeFeaturedImage(i) {
+      if(!confirm('Remove this featured image?')) return;
+      globalData.featured.images.splice(i, 1);
+      renderFeaturedImages();
+    }
+
+    async function addHeroImage() {
+      const file = document.getElementById('hero_add_file');
+      if(!file.files.length) return alert('Choose an image file first.');
+      const path = await uploadFile(file);
+      if(!path) return;
+      if(!globalData.hero) globalData.hero = { images: [] };
+      if(!globalData.hero.images) globalData.hero.images = [];
+      globalData.hero.images.push(path);
+      renderHeroImages();
+      file.value = '';
+    }
+
+    async function addFeaturedImage() {
+      const file = document.getElementById('feat_add_file');
+      if(!file.files.length) return alert('Choose an image file first.');
+      const path = await uploadFile(file);
+      if(!path) return;
+      if(!globalData.featured) globalData.featured = { images: [] };
+      if(!globalData.featured.images) globalData.featured.images = [];
+      globalData.featured.images.push(path);
+      renderFeaturedImages();
+      file.value = '';
+    }
+
+    function deleteItem(arrayName, id) {
+      if(!confirm('Delete this item?')) return;
+      globalData[arrayName] = globalData[arrayName].filter(x => x.id !== id);
+      renderAll();
+    }
+
+    async function uploadFile(fileInput) {
+      if(!fileInput.files.length) return null;
+      const formData = new FormData();
+      formData.append('file', fileInput.files[0]);
+      document.getElementById('save-status').textContent = "Uploading media...";
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + token },
+        body: formData
+      });
+      if(res.ok) {
+        const d = await res.json();
+        return d.path; // e.g. Images/123_abc.jpg
+      }
+      return null;
+    }
+
+    async function addService() {
+      const path = await uploadFile(document.getElementById('new_svc_media'));
+      if(!path) return alert('Photo/Video is required');
+      globalData.services.push({
+        id: generateId(),
+        title: document.getElementById('new_svc_title').value,
+        desc: document.getElementById('new_svc_desc').value,
+        type: document.getElementById('new_svc_type').value,
+        media: path
+      });
+      renderAll();
+      document.getElementById('new_svc_title').value = '';
+      document.getElementById('new_svc_desc').value = '';
+    }
+
+    async function addProduct() {
+      const path = await uploadFile(document.getElementById('new_pr_media'));
+      if(!path) return alert('Image is required');
+      globalData.products.push({
+        id: generateId(),
+        title: document.getElementById('new_pr_title').value,
+        price: document.getElementById('new_pr_price').value,
+        desc: document.getElementById('new_pr_desc').value,
+        media: path
+      });
+      renderAll();
+      document.getElementById('new_pr_title').value = '';
+      document.getElementById('new_pr_price').value = '';
+      document.getElementById('new_pr_desc').value = '';
+    }
+
+    async function addPortfolio() {
+      const path = await uploadFile(document.getElementById('new_port_media'));
+      if(!path) return alert('Media is required');
+      // strip Images/ for portfolio format compatibility, or redesign.
+      // Because we used Images/{{ p.filename }} in Jinja, we just extract filename
+      const filename = path.replace('Images/', '');
+      globalData.portfolio.unshift({
+        id: generateId(),
+        caption: document.getElementById('new_port_title').value,
+        subCaption: document.getElementById('new_port_sub').value,
+        type: document.getElementById('new_port_type').value,
+        filename: filename
+      });
+      renderAll();
+      document.getElementById('new_port_title').value = '';
+      document.getElementById('new_port_sub').value = '';
+    }
+
+    async function addVideo() {
+      const mv = await uploadFile(document.getElementById('new_v_media'));
+      const mp = await uploadFile(document.getElementById('new_v_poster'));
+      if(!mv) return alert('Video file is required');
+      
+      if(!globalData.video) globalData.video = [];
+      globalData.video.push({
+        id: generateId(),
+        media: mv,
+        poster: mp || ''
+      });
+      renderAll();
+      document.getElementById('new_v_media').value = '';
+      document.getElementById('new_v_poster').value = '';
+    }
+
+    async function addProcess() {
+      let path = '';
+      const fileInput = document.getElementById('new_proc_media');
+      if(fileInput.files.length) path = await uploadFile(fileInput);
+      
+      if(!globalData.process) globalData.process = [];
+      globalData.process.push({
+        id: generateId(),
+        number: document.getElementById('new_proc_num').value,
+        title: document.getElementById('new_proc_title').value,
+        desc: document.getElementById('new_proc_desc').value,
+        media: path
+      });
+      renderAll();
+      document.getElementById('new_proc_num').value = '';
+      document.getElementById('new_proc_title').value = '';
+      document.getElementById('new_proc_desc').value = '';
+      document.getElementById('new_proc_media').value = '';
+    }
+
+    function addTestimonial() {
+      if(!globalData.testimonials) globalData.testimonials = [];
+      globalData.testimonials.push({
+        id: generateId(),
+        client: document.getElementById('new_t_client').value,
+        quote: document.getElementById('new_t_quote').value
+      });
+      renderAll();
+      document.getElementById('new_t_client').value = '';
+      document.getElementById('new_t_quote').value = '';
+    }
+
+    async function publishChanges() {
+      document.getElementById('save-status').textContent = "Compiling Static Site...";
+      document.getElementById('save-status').style.color = "var(--secondary)";
+      
+      // Update About Text
+      globalData.about.title = document.getElementById('about_title').value;
+      globalData.about.text1 = document.getElementById('about_text1').value;
+      globalData.about.text2 = document.getElementById('about_text2').value;
+      globalData.about.text3 = document.getElementById('about_text3').value;
+      globalData.about.text4 = document.getElementById('about_text4').value;
+      const abtImg = await uploadFile(document.getElementById('about_image_file'));
+      if(abtImg) globalData.about.image = abtImg;
+
+      // Update Contact
+      globalData.contact.org = document.getElementById('c_org').value;
+      globalData.contact.location = document.getElementById('c_loc').value;
+      // Links are already in globalData.contact.links via addContactLink/deleteLink
+
+      // Update Process
+      if (globalData.process) {
+        for (let i = 0; i < globalData.process.length; i++) {
+          globalData.process[i].title = document.getElementById('proc_title_'+i).value;
+          globalData.process[i].desc = document.getElementById('proc_desc_'+i).value;
+          const fileInput = document.getElementById('proc_media_'+i);
+          if (fileInput && fileInput.files.length) {
+            globalData.process[i].media = await uploadFile(fileInput);
+          }
+        }
+      }
+
+      // Hero & Featured — already updated live via add/remove; no extra step needed here
+
+      // POST ALL DATA
+      const res = await fetch('/api/content', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token
+        },
+        body: JSON.stringify(globalData)
+      });
+
+      if(res.ok) {
+        document.getElementById('save-status').textContent = "Site compiled and published! ✅";
+        document.getElementById('save-status').style.color = "green";
+        setTimeout(() => {
+          document.getElementById('save-status').textContent = "All systems loaded.";
+          document.getElementById('save-status').style.color = "var(--text)";
+        }, 4000);
+      } else {
+        document.getElementById('save-status').textContent = "Error compiling site.";
+        document.getElementById('save-status').style.color = "red";
+      }
+    }
+  </script>
+</body>
+</html>
